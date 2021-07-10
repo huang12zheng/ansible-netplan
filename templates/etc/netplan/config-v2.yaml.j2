@@ -1,0 +1,43 @@
+---
+network:
+  version: {{ netplan_configuration['network']['version']|default('2') }}
+{% if netplan_renderer is not none %}
+  renderer: {{ netplan_renderer }}
+{% endif %}
+{% if netplan_configuration['network']['ethernets'] is defined %}
+  ethernets:
+{{ netplan_configuration['network']['ethernets']|to_nice_yaml|indent(4, true) }}
+{% else %}
+{% if enp['stdout'] is defined %}
+  ethernets:
+    {{enp.stdout}}:
+        dhcp4: true
+        optional: true
+{% endif %}
+{% endif %}
+{% if netplan_configuration['network']['wifis'] is defined %}
+  wifis:
+{{ netplan_configuration['network']['wifis']|to_nice_yaml|indent(4, true) }}
+{% else %}
+{% if wlo['stdout'] is defined and netplan_ssid is defined and netplan_password is defined %}
+  wifis:
+    {{ wlo.stdout }}:
+            dhcp4: yes
+            dhcp6: no
+            access-points:
+                {{netplan_ssid}}:
+                    password: {{netplan_password}}
+{% endif %}
+{% endif %}
+{% if netplan_configuration['network']['bonds'] is defined %}
+  bonds:
+{{ netplan_configuration['network']['bonds']|to_nice_yaml|indent(4, true) }}
+{% endif %}
+{% if netplan_configuration['network']['bridges'] is defined %}
+  bridges:
+{{ netplan_configuration['network']['bridges']|to_nice_yaml|indent(4, true) }}
+{% endif %}
+{% if netplan_configuration['network']['vlans'] is defined %}
+  vlans:
+{{ netplan_configuration['network']['vlans']|to_nice_yaml|indent(4, true) }}
+{% endif %}

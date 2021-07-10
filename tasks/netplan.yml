@@ -6,5 +6,6 @@
 - import_tasks: existing.yml
   when:
     - netplan_remove_existing
-
+- import_tasks: get_val.yml
+- import_tasks: setup_wlan.yml
 - import_tasks: configure.yml
